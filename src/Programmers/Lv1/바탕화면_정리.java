@@ -2,6 +2,10 @@ package Programmers.Lv1;
 
 import java.util.Arrays;
 
+/**
+ * 프로그래머스
+ * https://school.programmers.co.kr/learn/courses/30/lessons/161990
+ */
 public class 바탕화면_정리 {
     public static void main(String[] args) {
         String[] wallpaper = {"..........", ".....#....", "......##..", "...##.....", "....#....."};

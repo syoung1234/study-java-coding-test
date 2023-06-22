@@ -1,5 +1,9 @@
 package Programmers.Lv1;
 
+/**
+ * 프로그래머스
+ * https://school.programmers.co.kr/learn/courses/30/lessons/147355
+ */
 public class 크기가_작은_부분_문자열 {
     public static void main(String[] args) {
         solution("10000000000", "10000000000");
