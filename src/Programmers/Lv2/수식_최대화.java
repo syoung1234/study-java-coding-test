@@ -4,11 +4,14 @@ import java.util.*;
 
 /**
  * https://school.programmers.co.kr/learn/courses/30/lessons/67257
- * 못 품
+ * 하루종일 해서 품....
+ * - 는 0으로 치환해서 풀면 편함 (연산자 -가 아님)
+ * 예) -300*-220 -> 0300*0220 -> calculate 에서 0은 - 로 치환
  */
 public class 수식_최대화 {
     public static void main(String[] args) {
-        solution("100-200*300+324+234234-234234*100-200*300+324+234234-234234");
+        // solution("100-200*300-500+20");
+        solution("50*6-3*2");
     }
 
     // 연산자 우선순위 재정의하여 만들 수 있는 가장 큰 숫자 제출
@@ -30,81 +33,41 @@ public class 수식_최대화 {
             ex = expression;
             char[] chars = pri.toCharArray();
             for (char c : chars) {
-                int i = ex.indexOf(c,1) - 1;
-                int j = ex.indexOf(c, 1) + 1;
-                System.out.println("iii = " + i);
-                if (c == '*') {
-                    if (ex.charAt(j) == '-') {
-                        j = j + 1;
-                    }
+                if (ex.indexOf(c) < 0) {
+                    continue;
                 }
-                if (i < 0 || j >= ex.length()) continue;
-
-                String a = "";
-                String b = "";
+                int index = ex.indexOf(c, 1);
+                int i = index - 1, j = index + 1;
                 boolean left = true, right = true;
-                // 앞 뒤로 더하기
-                while (true) {
-                    System.out.println("i = " + i);
-                    if (i >= 0 && left && Character.isDigit(ex.charAt(i))) {
-                        a += ex.charAt(i);
-                        i--;
-                        if (i < 0) {
-                            left = false;
-                        }
-                    } else {
-                        left = false;
-                    }
+                String a = "", b = "";
+                String calculate = "";
 
-                    if (j < ex.length() && Character.isDigit(ex.charAt(j))) {
-                        b += ex.charAt(j);
-                        j++;
-                    } else {
-                        right = false;
+                while (left || right) {
+                    if (i >= 0 && Character.isDigit(ex.charAt(i))) {
+                        a = ex.charAt(i) + a;
+                        i--;
                     }
+                    else left = false;
+                    if (j < ex.length() && Character.isDigit(ex.charAt(j))) {
+                        b = b + ex.charAt(j);
+                        j++;
+                    }
+                    else right = false;
 
                     if (!left && !right) {
-                        String re = "";
-                        for (int k = i+1; k < j; k++) {
-                            re += ex.charAt(k);
-                        }
-
-                        String[] s = re.split(String.valueOf("\\"+c));
-                        System.out.println("re = " + re);
-                        System.out.println("s[ = " + Arrays.toString(s));
-                        String calculate;
-                        if (i == 0 && ex.charAt(i) == '-') {
-                            System.out.println("ex.chatAT = " + ex.charAt(i));
-                            System.out.println("c = " + c);
-                            if (c == '-') calculate = calculate(s[0], s[1], '+')+"";
-                            else calculate = calculate(s[0], s[1], c)+"";
-                        } else {
-                            calculate = calculate(s[0], s[1], c)+"";
-                        }
-
-                        System.out.println("c = " + c);
-                        System.out.println("calculate = " + calculate);
-                        ex = ex.replace(re, calculate);
-                        System.out.println("ex = " + ex);
-                        System.out.println("j = " + j);
+                        // 수식 끝
+                        calculate = calculate(a, b, c);
+                        ex = ex.replace(a + c + b, calculate);
                         if (ex.indexOf(c, 1) > 0) {
-                            i = ex.indexOf(c, 1) - 1;
-                            j = ex.indexOf(c, 1) + 1;
-                            a = "";
-                            b = "";
-                            left = true;
-                            right = true;
-                            if (!Character.isDigit(ex.charAt(i))) {
-                                break;
-                            }
-                        } else {
-                            break;
+                            index = ex.indexOf(c, 1);
+                            i = index - 1;
+                            j = index + 1;
+                            left = true; right = true;
+                            a = ""; b = "";
                         }
                     }
                 }
-            }
-            if(ex.charAt(0) == '-') {
-                ex = ex.substring(1);
+
             }
             answer = Math.max(Math.abs(Long.parseLong(ex)), answer);
         }
@@ -114,19 +77,30 @@ public class 수식_최대화 {
         return answer;
     }
 
-    static long calculate(String l, String r, Character operator) {
+    static String calculate(String l, String r, Character operator) {
         long a = Long.parseLong(l);
         long b = Long.parseLong(r);
-        long result;
+        long cal;
+
+        // 마이너스 연산자
+        if (l.charAt(0) == '0') a *= -1;
+        if (r.charAt(0) == '0') b *= -1;
+
+        String result;
         if (operator == '+') {
-            result = a + b;
+            cal = a + b;
         } else if (operator == '-') {
-            result = a - b;
+            cal = a - b;
         } else {
-            result = a * b;
+            cal = a * b;
+        }
+        result = String.valueOf(cal);
+        if (cal < 0) {
+            result = result.replace('-', '0');
         }
         return result;
     }
+
 }
 
 
